@@ -1,18 +1,24 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { GRID_SIZE, UP, DOWN, LEFT, RIGHT, findPath, getSurvivalMove, isOpposite } from '../utils/aiLogic';
+import { GRID_SIZE, UP, DOWN, LEFT, RIGHT, findPath, getSurvivalMove, isOpposite, getFoodEvasionMove } from '../utils/aiLogic';
+import { soundManager } from '../utils/sounds';
 
 const INITIAL_SNAKE = [{ x: 10, y: 10 }, { x: 10, y: 11 }, { x: 10, y: 12 }]; // Tail is last
 const INITIAL_DIR = UP;
-const GAME_SPEED = 100; // ms per tick
+const GAME_SPEED = 120; // ms per tick (slightly slower for better playability)
 
 export const useGameLogic = () => {
     const [snake, setSnake] = useState(INITIAL_SNAKE);
     const [food, setFood] = useState({ x: 5, y: 5 });
     const [direction, setDirection] = useState(INITIAL_DIR);
     const [score, setScore] = useState(0);
+    const [highScore, setHighScore] = useState(() => {
+        const saved = localStorage.getItem('snake-high-score');
+        return saved ? parseInt(saved, 10) : 0;
+    });
     const [status, setStatus] = useState('IDLE'); // IDLE, PLAYING, GAMEOVER
     const [aiMode, setAiMode] = useState(false);
     const [aiPath, setAiPath] = useState([]); // For visualization
+    const [smartFood, setSmartFood] = useState(true); // Toggle for food AI
 
     // Use refs for mutable values inside intervals to avoid closure staleness without excessive re-renders
     const snakeRef = useRef(snake);
@@ -20,6 +26,7 @@ export const useGameLogic = () => {
     const foodRef = useRef(food);
     const aiModeRef = useRef(aiMode);
     const statusRef = useRef(status);
+    const smartFoodRef = useRef(smartFood);
 
     // Sync refs
     useEffect(() => { snakeRef.current = snake; }, [snake]);
@@ -27,6 +34,7 @@ export const useGameLogic = () => {
     useEffect(() => { foodRef.current = food; }, [food]);
     useEffect(() => { aiModeRef.current = aiMode; }, [aiMode]);
     useEffect(() => { statusRef.current = status; }, [status]);
+    useEffect(() => { smartFoodRef.current = smartFood; }, [smartFood]);
 
     const generateFood = useCallback((currentSnake) => {
         let newFood;
@@ -52,23 +60,56 @@ export const useGameLogic = () => {
     };
 
     const handleKeyPress = useCallback((e) => {
+        // Handle spacebar for AI toggle and game start
+        if (e.key === ' ' || e.code === 'Space') {
+            e.preventDefault();
+            if (statusRef.current === 'IDLE') {
+                setStatus('PLAYING');
+            } else if (statusRef.current === 'PLAYING') {
+                setAiMode(!aiModeRef.current);
+                soundManager.playToggle();
+            }
+            return;
+        }
+
+        // Toggle smart food with 'F' key
+        if (e.key === 'f' || e.key === 'F') {
+            setSmartFood(!smartFoodRef.current);
+            soundManager.createBeep(500, 0.1, 'sine');
+            return;
+        }
+
+        // Start game on first arrow key press
+        if (statusRef.current === 'IDLE') {
+            setStatus('PLAYING');
+        }
+
         if (aiModeRef.current) return; // Disable controls in AI mode
 
         switch (e.key) {
             case 'ArrowUp':
-                if (!isOpposite(directionRef.current, UP)) setDirection(UP);
+                if (!isOpposite(directionRef.current, UP)) {
+                    setDirection(UP);
+                    soundManager.playMove();
+                }
                 break;
             case 'ArrowDown':
-                if (!isOpposite(directionRef.current, DOWN)) setDirection(DOWN);
+                if (!isOpposite(directionRef.current, DOWN)) {
+                    setDirection(DOWN);
+                    soundManager.playMove();
+                }
                 break;
             case 'ArrowLeft':
-                if (!isOpposite(directionRef.current, LEFT)) setDirection(LEFT);
+                if (!isOpposite(directionRef.current, LEFT)) {
+                    setDirection(LEFT);
+                    soundManager.playMove();
+                }
                 break;
             case 'ArrowRight':
-                if (!isOpposite(directionRef.current, RIGHT)) setDirection(RIGHT);
-                break;
-            case ' ': // Spacebar to toggle
-                // Optional: Toggle pause?
+                if (!isOpposite(directionRef.current, RIGHT)) {
+                    setDirection(RIGHT);
+                    soundManager.playMove();
+                }
                 break;
             default:
                 break;
@@ -115,6 +156,18 @@ export const useGameLogic = () => {
         const head = currentSnake[0];
         const newHead = { x: head.x + nextDir.x, y: head.y + nextDir.y };
 
+        // SMART FOOD EVASION - Move food before collision check
+        if (smartFoodRef.current) {
+            const currentFood = foodRef.current;
+            const evasionMove = getFoodEvasionMove(currentFood, newHead, currentSnake);
+
+            if (evasionMove) {
+                setFood(evasionMove);
+                // Play a subtle sound when food moves
+                soundManager.playFoodMove();
+            }
+        }
+
         // Collision Check (Walls) - Logic for "No Walls" can be added here, but standard is death
         if (
             newHead.x < 0 ||
@@ -123,16 +176,24 @@ export const useGameLogic = () => {
             newHead.y >= GRID_SIZE ||
             currentSnake.some((seg, index) => index !== currentSnake.length - 1 && seg.x === newHead.x && seg.y === newHead.y) // Self collision
         ) {
+            // Update high score if needed
+            if (score > highScore) {
+                setHighScore(score);
+                localStorage.setItem('snake-high-score', score.toString());
+            }
             setStatus('GAMEOVER');
+            soundManager.playGameOver();
             return;
         }
 
         // Move Snake
         const newSnake = [newHead, ...currentSnake];
 
-        // Check Food
-        if (newHead.x === foodRef.current.x && newHead.y === foodRef.current.y) {
+        // Check Food (use current food position after potential evasion)
+        const currentFood = foodRef.current;
+        if (newHead.x === currentFood.x && newHead.y === currentFood.y) {
             setScore(s => s + 10);
+            soundManager.playEat();
             const nextFood = generateFood(newSnake);
             setFood(nextFood);
             // Don't pop tail (grow)
@@ -142,7 +203,7 @@ export const useGameLogic = () => {
 
         setSnake(newSnake);
 
-    }, [getAiMove, generateFood]);
+    }, [getAiMove, generateFood, score, highScore]);
 
     useEffect(() => {
         const interval = setInterval(gameLoop, GAME_SPEED);
@@ -159,10 +220,13 @@ export const useGameLogic = () => {
         food,
         direction,
         score,
+        highScore,
         status,
         aiMode,
         setAiMode,
         resetGame,
-        aiPath
+        aiPath,
+        smartFood,
+        setSmartFood
     };
 };

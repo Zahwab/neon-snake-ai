@@ -64,3 +64,55 @@ export const getSurvivalMove = (head, snake) => {
     }
     return [];
 }
+
+// Calculate Manhattan distance between two points
+const getManhattanDistance = (pos1, pos2) => {
+    return Math.abs(pos1.x - pos2.x) + Math.abs(pos1.y - pos2.y);
+};
+
+// Food AI: Try to evade the snake when it gets close
+export const getFoodEvasionMove = (food, snakeHead, snake, dangerRadius = 5) => {
+    const distance = getManhattanDistance(food, snakeHead);
+
+    // Only evade if snake is within danger radius
+    if (distance > dangerRadius) {
+        return null; // Don't move
+    }
+
+    // Find all valid adjacent positions for food
+    const validMoves = [];
+
+    for (let dir of DIRECTIONS) {
+        const newPos = {
+            x: food.x + dir.x,
+            y: food.y + dir.y
+        };
+
+        // Check if position is valid (not wall, not snake body)
+        if (isValid(newPos.x, newPos.y) && !isBlockedBySnake(newPos, snake)) {
+            // Calculate distance from snake head at this new position
+            const newDistance = getManhattanDistance(newPos, snakeHead);
+            validMoves.push({
+                pos: newPos,
+                distance: newDistance,
+                dir: dir
+            });
+        }
+    }
+
+    // If no valid moves, stay put
+    if (validMoves.length === 0) {
+        return null;
+    }
+
+    // Sort by distance (furthest first) and pick the best escape route
+    validMoves.sort((a, b) => b.distance - a.distance);
+
+    // Return the position that maximizes distance from snake head
+    return validMoves[0].pos;
+};
+
+// Check if position is blocked by any part of the snake
+const isBlockedBySnake = (pos, snake) => {
+    return snake.some(segment => segment.x === pos.x && segment.y === pos.y);
+};
