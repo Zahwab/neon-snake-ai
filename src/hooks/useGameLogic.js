@@ -5,6 +5,7 @@ import { soundManager } from '../utils/sounds';
 const INITIAL_SNAKE = [{ x: 10, y: 10 }, { x: 10, y: 11 }, { x: 10, y: 12 }]; // Tail is last
 const INITIAL_DIR = UP;
 const GAME_SPEED = 120; // ms per tick (slightly slower for better playability)
+const SNAKE_SPEED_MULTIPLIER = 2; // Snake moves 2x faster than food when in AI mode
 
 export const useGameLogic = () => {
     const [snake, setSnake] = useState(INITIAL_SNAKE);
@@ -19,6 +20,7 @@ export const useGameLogic = () => {
     const [aiMode, setAiMode] = useState(false);
     const [aiPath, setAiPath] = useState([]); // For visualization
     const [smartFood, setSmartFood] = useState(true); // Toggle for food AI
+    const [tickCounter, setTickCounter] = useState(0); // Counter for controlling food movement speed
 
     // Use refs for mutable values inside intervals to avoid closure staleness without excessive re-renders
     const snakeRef = useRef(snake);
@@ -27,6 +29,7 @@ export const useGameLogic = () => {
     const aiModeRef = useRef(aiMode);
     const statusRef = useRef(status);
     const smartFoodRef = useRef(smartFood);
+    const tickCounterRef = useRef(tickCounter);
 
     // Sync refs
     useEffect(() => { snakeRef.current = snake; }, [snake]);
@@ -35,6 +38,7 @@ export const useGameLogic = () => {
     useEffect(() => { aiModeRef.current = aiMode; }, [aiMode]);
     useEffect(() => { statusRef.current = status; }, [status]);
     useEffect(() => { smartFoodRef.current = smartFood; }, [smartFood]);
+    useEffect(() => { tickCounterRef.current = tickCounter; }, [tickCounter]);
 
     const generateFood = useCallback((currentSnake) => {
         let newFood;
@@ -57,6 +61,7 @@ export const useGameLogic = () => {
         setStatus('PLAYING');
         setFood(generateFood(INITIAL_SNAKE));
         setAiPath([]);
+        setTickCounter(0);
     };
 
     const handleKeyPress = useCallback((e) => {
@@ -144,6 +149,10 @@ export const useGameLogic = () => {
     const gameLoop = useCallback(() => {
         if (statusRef.current !== 'PLAYING') return;
 
+        // Increment tick counter
+        setTickCounter(prev => prev + 1);
+        const currentTick = tickCounterRef.current + 1;
+
         let nextDir = directionRef.current;
 
         // AI CONTROL
@@ -156,15 +165,19 @@ export const useGameLogic = () => {
         const head = currentSnake[0];
         const newHead = { x: head.x + nextDir.x, y: head.y + nextDir.y };
 
-        // SMART FOOD EVASION - Move food before collision check
+        // SMART FOOD EVASION - Only move food at reduced frequency when snake is in AI mode
         if (smartFoodRef.current) {
-            const currentFood = foodRef.current;
-            const evasionMove = getFoodEvasionMove(currentFood, newHead, currentSnake);
+            const shouldFoodMove = !aiModeRef.current || (currentTick % SNAKE_SPEED_MULTIPLIER === 0);
 
-            if (evasionMove) {
-                setFood(evasionMove);
-                // Play a subtle sound when food moves
-                soundManager.playFoodMove();
+            if (shouldFoodMove) {
+                const currentFood = foodRef.current;
+                const evasionMove = getFoodEvasionMove(currentFood, newHead, currentSnake);
+
+                if (evasionMove) {
+                    setFood(evasionMove);
+                    // Play a subtle sound when food moves
+                    soundManager.playFoodMove();
+                }
             }
         }
 

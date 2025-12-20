@@ -119,6 +119,11 @@ function App() {
           <div style={{ fontSize: '0.7rem', opacity: 0.5, marginTop: '5px' }}>
             PATHFINDING: BFS ALGORITHM • FOOD EVASION: MANHATTAN DISTANCE
           </div>
+          {aiMode && smartFood && (
+            <div style={{ fontSize: '0.7rem', color: '#ffff33', marginTop: '5px', textShadow: '0 0 5px #ffff33' }}>
+              ⚡ SMART SNAKE: 2X SPEED ADVANTAGE ⚡
+            </div>
+          )}
         </div>
 
       </div>
