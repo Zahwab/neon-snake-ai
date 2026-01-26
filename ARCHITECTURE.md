@@ -23,7 +23,7 @@ graph TD
     App --> HUD[UI Overlays / Buttons]
 
     Hook --> State[Game State]
-    Hook --> Loop[Game Loop (setInterval)]
+    Hook --> Loop["Game Loop (setInterval)"]
 
     Loop --> Update[Update Logic]
     Update --> AI[src/utils/aiLogic.js]
