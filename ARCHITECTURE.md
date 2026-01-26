@@ -65,16 +65,19 @@ graph TD
 
 ## 🎨 Rendering Pipeline
 
-1. **Clear Canvas**: `ctx.clearRect(0, 0, width, height)`
-2. **Draw Grid**: Draw faint lines for background.
-3. **Draw Food**:
+1. **Clear Screen**: `ctx.fillRect` with a radial gradient (dark CRT background).
+2. **Draw Grid**: Draw faint green lines for the background grid.
+3. **Draw AI Path** (Ghost Path):
+   - Drawn *underneath* the snake.
+   - If `aiMode` is true, draw faint blue dots for each step in `aiPath`.
+4. **Draw Food**:
    - Save Context.
    - Apply Glow Effect (`shadowBlur`).
-   - Fill Rect (Red/Orange).
+   - Fill Rect (Red/Orange based on `smartFood` status).
    - Restore Context.
-4. **Draw Snake**:
+5. **Draw Snake**:
    - Iterate through `snake` array.
-   - Head gets a special color/glow.
-   - Body segments get gradient color.
-5. **Draw AI Path**:
-   - If `aiMode` is true, draw faint white dots for each step in `aiPath`.
+   - **Head**: Bright white/green glow with eyes.
+   - **Body**: Gradient green segments.
+6. **Draw Overlays**:
+   - Game Over / Idle text overlays are drawn last on top of everything.
