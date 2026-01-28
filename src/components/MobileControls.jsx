@@ -12,24 +12,18 @@ const MobileControls = ({ onDirectionChange }) => {
     };
 
     return (
-        <div className="mobile-controls" style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '10px',
-            zIndex: 1000 // Ensure it's above scanlines if needed, though they are usually overlay
-        }}>
-            <button
-                className="control-btn"
-                onTouchStart={(e) => handleTouch(e, UP)}
-                onMouseDown={(e) => handleTouch(e, UP)}
-                aria-label="Up"
-            >
-                ▲
-            </button>
-            <div style={{ display: 'flex', gap: '20px' }}>
+        <div className="mobile-controls">
+            <div className="d-pad-grid">
                 <button
-                    className="control-btn"
+                    className="control-btn up-btn"
+                    onTouchStart={(e) => handleTouch(e, UP)}
+                    onMouseDown={(e) => handleTouch(e, UP)}
+                    aria-label="Up"
+                >
+                    ▲
+                </button>
+                <button
+                    className="control-btn left-btn"
                     onTouchStart={(e) => handleTouch(e, LEFT)}
                     onMouseDown={(e) => handleTouch(e, LEFT)}
                     aria-label="Left"
@@ -37,7 +31,7 @@ const MobileControls = ({ onDirectionChange }) => {
                     ◀
                 </button>
                 <button
-                    className="control-btn"
+                    className="control-btn down-btn"
                     onTouchStart={(e) => handleTouch(e, DOWN)}
                     onMouseDown={(e) => handleTouch(e, DOWN)}
                     aria-label="Down"
@@ -45,7 +39,7 @@ const MobileControls = ({ onDirectionChange }) => {
                     ▼
                 </button>
                 <button
-                    className="control-btn"
+                    className="control-btn right-btn"
                     onTouchStart={(e) => handleTouch(e, RIGHT)}
                     onMouseDown={(e) => handleTouch(e, RIGHT)}
                     aria-label="Right"

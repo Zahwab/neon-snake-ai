@@ -34,12 +34,12 @@ This isn't just your standard CRT-style Snake. It features an embedded **AI Auto
 - **Arrow Keys**: Move the snake (Manual mode only)
 - **Spacebar**: Toggle between Manual and AI mode
 - **F Key**: Toggle Smart Food evasion on/off
-- **Any Arrow Key** (Game Over): Restart the game
+- **Arrow Keys** (Game Over): Restart the game
 
 ### Mobile / Touch
 - **Touch Controls**: Use the on-screen joystick/arrows to move.
 - **AI Button**: Tap to toggle AI mode.
-- **Restart**: Tap the restart button or use arrow controls after game over.
+- **Restart**: Tap arrow controls after game over.
 
 ## 🎯 Game Modes
 

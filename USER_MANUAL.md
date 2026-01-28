@@ -34,7 +34,7 @@ The game features a retro CRT (Cathode Ray Tube) aesthetic with scanlines, scree
 | **Arrow Right** | Move Right |
 | **Spacebar** | Toggle AI Mode |
 | **F** | Toggle Smart Food Evasion |
-| **Any Arrow** | Restart Game (After Game Over) |
+| **Arrow Keys** | Restart Game (After Game Over) |
 
 ---
 

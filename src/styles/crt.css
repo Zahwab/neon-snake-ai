@@ -172,6 +172,10 @@ body {
   max-width: 95%;
   margin: 5px auto;
   line-height: 1.3;
+  width: 90%;
+  box-sizing: border-box;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 
@@ -440,9 +444,50 @@ body {
 
   .mobile-controls {
     display: flex !important;
-    margin-top: 15px;
-    gap: 20px;
-    /* Space out d-pad buttons if separate */
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+
+  .d-pad-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 5px;
+    /* Tighter gap for better cross shape */
+    width: auto;
+  }
+
+  .control-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+
+  /* Grid Positioning for D-Pad Cross */
+  /*
+    . . U . .
+    L . D . R
+  */
+  .up-btn {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .left-btn {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .down-btn {
+    grid-column: 2;
+    grid-row: 3;
+  }
+
+  .right-btn {
+    grid-column: 3;
+    grid-row: 2;
   }
 
   .desktop-only {
