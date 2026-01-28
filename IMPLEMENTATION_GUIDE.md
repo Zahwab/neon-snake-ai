@@ -43,12 +43,12 @@ To make the game challenging, the food is not a static target. It possesses a ba
 ### Evasion Decision Tree
 ```mermaid
 flowchart TD
-    A[Game Update] --> B[Calculate Manhattan Dist(SnakeHead, Food)]
-    B --> C{Distance < 5?}
+    A[Game Update] --> B["Calculate Manhattan Dist(SnakeHead, Food)"]
+    B --> C{"Distance < 5?"}
     C -- No --> D[Stay Still]
     C -- Yes --> E[Identify all 4 neighbors]
     E --> F[Filter Blocked/Wall Cells]
-    F --> G[Calculate Dist(Neighbor, SnakeHead) for all valid moves]
+    F --> G["Calculate Dist(Neighbor, SnakeHead) for all valid moves"]
     G --> H[Select Move with MAX Distance]
     H --> I[Move Food]
 ```
