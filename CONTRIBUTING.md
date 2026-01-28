@@ -28,7 +28,7 @@ First off, thanks for taking the time to contribute! 🎉
 
 Since this is a visual game, please test the following before submitting:
 - [ ] **Manual Mode**: Does the snake move correctly?
-- [ ] **AI Mode**: Does the BFS find the food?
+- [ ] **AI Mode**: Does the pathfinding find the food?
 - [ ] **Collision**: Does the game end when hitting walls/tail?
 - [ ] **Smart Food**: Does the food evade when you get close?
 

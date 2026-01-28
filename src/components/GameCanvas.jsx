@@ -86,7 +86,7 @@ const GameCanvas = ({ snake, food, aiPath, aiMode, status, smartFood }) => {
             ctx.shadowBlur = 5;
             ctx.shadowColor = '#ffffff';
             const dotSize = 4;
-            ctx.fillRect(foodX + foodSize/2 - dotSize/2, foodY + foodSize/2 - dotSize/2, dotSize, dotSize);
+            ctx.fillRect(foodX + foodSize / 2 - dotSize / 2, foodY + foodSize / 2 - dotSize / 2, dotSize, dotSize);
         }
 
         ctx.shadowBlur = 0;
@@ -137,20 +137,7 @@ const GameCanvas = ({ snake, food, aiPath, aiMode, status, smartFood }) => {
         if (status === 'GAMEOVER') {
             ctx.fillStyle = 'rgba(0,0,0,0.8)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = '#ff3333';
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = '#ff3333';
-            ctx.font = 'bold 36px "Courier New"';
-            ctx.textAlign = 'center';
-            ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 20);
-
-            ctx.fillStyle = '#33ff33';
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = '#33ff33';
-            ctx.font = '18px "Courier New"';
-            ctx.fillText('Press SPACE to Restart', canvas.width / 2, canvas.height / 2 + 30);
-            ctx.shadowBlur = 0;
+            // Text is now handled by HTML overlay in App.jsx
         }
 
         // Draw Idle Overlay
@@ -166,7 +153,13 @@ const GameCanvas = ({ snake, food, aiPath, aiMode, status, smartFood }) => {
             ref={canvasRef}
             width={GRID_SIZE * CELL_SIZE}
             height={GRID_SIZE * CELL_SIZE}
-            style={{ border: '2px solid #333', boxShadow: '0 0 10px #33ff33' }}
+            style={{
+                border: '2px solid #333',
+                boxShadow: '0 0 10px #33ff33',
+                maxWidth: '100%',
+                maxHeight: '100%',
+                objectFit: 'contain'
+            }}
         />
     );
 };

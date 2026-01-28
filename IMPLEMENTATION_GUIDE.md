@@ -4,17 +4,17 @@ This guide details the technical implementation of the AI algorithms and game lo
 
 ## 🧠 AI Pathfinding Logic (The Snake)
 
-The core of the "Autopilot" feature is a Breadth-First Search (BFS) algorithm that recalculates the optimal path to the food on every single frame.
+The core of the "Autopilot" feature is a shortest-path algorithm that recalculates the optimal path to the food on every single frame.
 
-### Algorithm: Breadth-First Search (BFS)
-We use BFS because the grid is unweighted (moving to any neighbor costs 1 step), effectively guaranteeing the shortest path.
+### Algorithm: Pathfinding (Shortest Path)
+We use a shortest-path algorithm because the grid is unweighted (moving to any neighbor costs 1 step), effectively guaranteeing the shortest path.
 
 #### Flowchart
 ```mermaid
 flowchart TD
     A[Start Frame] --> B{AI Mode Enabled?}
     B -- No --> C[Use Player Input]
-    B -- Yes --> D[Run BFS Search]
+    B -- Yes --> D[Run Pathfinding Search]
     D --> E{Path to Food Found?}
     E -- Yes --> F[Follow Next Step in Path]
     E -- No --> G[Survival Mode]

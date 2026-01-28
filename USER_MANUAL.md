@@ -21,7 +21,7 @@ The game features a retro CRT (Cathode Ray Tube) aesthetic with scanlines, scree
 | Mode | Description | How to Activate |
 | :--- | :--- | :--- |
 | **Manual Mode** | You control the snake using Arrow Keys. Classic gameplay. | Default mode. Use Arrow Keys. |
-| **AI Autopilot** | The computer plays for you using BFS pathfinding. | Press **SPACE** or click "TOGGLE AI". |
+| **AI Autopilot** | The computer plays for you using its pathfinding algorithm. | Press **SPACE** or click "TOGGLE AI". |
 | **Smart Food** | The food tries to run away from you! | Press **F** or click "SMART FOOD". |
 
 ### 2. Controls
@@ -32,8 +32,9 @@ The game features a retro CRT (Cathode Ray Tube) aesthetic with scanlines, scree
 | **Arrow Down** | Move Down |
 | **Arrow Left** | Move Left |
 | **Arrow Right** | Move Right |
-| **Spacebar** | Toggle AI Mode / Restart Game (Variables) |
+| **Spacebar** | Toggle AI Mode |
 | **F** | Toggle Smart Food Evasion |
+| **Any Arrow** | Restart Game (After Game Over) |
 
 ---
 

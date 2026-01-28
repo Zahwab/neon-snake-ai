@@ -9,7 +9,7 @@ This document provides a high-level overview of the application architecture, co
 - **Language**: JavaScript (ES6+)
 - **Styling**: Pure CSS (CRT Effects), Inline Styles (Dynamic Layout)
 - **Rendering**: HTML5 `<canvas>` API
-- **Algorithms**: Breadth-First Search (BFS), Manhattan Distance
+- **Algorithms**: Pathfinding (Shortest Path), Manhattan Distance
 
 ## 🧩 Component Map
 
@@ -44,7 +44,7 @@ graph TD
 | ├── **hooks/** | Custom React hooks (Business logic layer) |
 | │   └── `useGameLogic.js` | Manages snake state, loop, and collisions |
 | ├── **utils/** | Pure functions and algorithms |
-| │   ├── `aiLogic.js` | BFS pathfinding and helper functions |
+| │   ├── `aiLogic.js` | Pathfinding and helper functions |
 | │   └── `sounds.js` | Audio synthesis logic |
 | └── **styles/** | CSS files for global themes |
 

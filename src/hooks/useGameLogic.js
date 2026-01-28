@@ -2,7 +2,11 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { GRID_SIZE, UP, DOWN, LEFT, RIGHT, findPath, getSurvivalMove, isOpposite, getFoodEvasionMove } from '../utils/aiLogic';
 import { soundManager } from '../utils/sounds';
 
-const INITIAL_SNAKE = [{ x: 10, y: 10 }, { x: 10, y: 11 }, { x: 10, y: 12 }]; // Tail is last
+const INITIAL_SNAKE = [
+    { x: Math.floor(GRID_SIZE / 2), y: Math.floor(GRID_SIZE / 2) },
+    { x: Math.floor(GRID_SIZE / 2), y: Math.floor(GRID_SIZE / 2) + 1 },
+    { x: Math.floor(GRID_SIZE / 2), y: Math.floor(GRID_SIZE / 2) + 2 }
+];
 const INITIAL_DIR = UP;
 const GAME_SPEED = 120; // ms per tick (slightly slower for better playability)
 const SNAKE_SPEED_MULTIPLIER = 2; // Snake moves 2x faster than food when in AI mode
@@ -54,7 +58,7 @@ export const useGameLogic = () => {
         return newFood;
     }, []);
 
-    const resetGame = () => {
+    const resetGame = useCallback(() => {
         setSnake(INITIAL_SNAKE);
         setDirection(INITIAL_DIR);
         setScore(0);
@@ -62,7 +66,7 @@ export const useGameLogic = () => {
         setFood(generateFood(INITIAL_SNAKE));
         setAiPath([]);
         setTickCounter(0);
-    };
+    }, [generateFood]);
 
     const handleKeyPress = useCallback((e) => {
         // Handle spacebar for AI toggle and game start
@@ -82,6 +86,14 @@ export const useGameLogic = () => {
             setSmartFood(!smartFoodRef.current);
             soundManager.createBeep(500, 0.1, 'sine');
             return;
+        }
+
+        // Handle Restart on Game Over with any Arrow Key
+        if (statusRef.current === 'GAMEOVER') {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                resetGame();
+                return;
+            }
         }
 
         // Start game on first arrow key press
@@ -119,7 +131,7 @@ export const useGameLogic = () => {
             default:
                 break;
         }
-    }, []);
+    }, [resetGame]);
 
     // AI Decision Logic
     const getAiMove = useCallback(() => {
@@ -240,6 +252,25 @@ export const useGameLogic = () => {
         resetGame,
         aiPath,
         smartFood,
-        setSmartFood
+        setSmartFood,
+        // Expose a helper to change direction safely (for mobile controls)
+        handleDirection: (newDir) => {
+            if (statusRef.current === 'IDLE') {
+                setStatus('PLAYING');
+            }
+
+            // Handle restart on mobile tap during Game Over
+            if (statusRef.current === 'GAMEOVER') {
+                resetGame();
+                return;
+            }
+
+            if (aiModeRef.current || statusRef.current !== 'PLAYING') return;
+
+            if (!isOpposite(directionRef.current, newDir)) {
+                setDirection(newDir);
+                soundManager.playMove();
+            }
+        }
     };
 };

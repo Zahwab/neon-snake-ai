@@ -1,11 +1,14 @@
 /* CRT Scanline and Screen Effects */
 :root {
-  --phosphor-primary: #33ff33; /* Classic Green Terminal */
+  --phosphor-primary: #33ff33;
+  /* Classic Green Terminal */
   --phosphor-secondary: #22cc22;
   --phosphor-accent: #00ff88;
   --bg-color: #0b100b;
   --neon-red: #ff3333;
   --neon-blue: #3366ff;
+  --neon-yellow: #ffff33;
+  --glass-border: rgba(51, 255, 51, 0.3);
 }
 
 body {
@@ -34,8 +37,12 @@ body {
 /* Screen Container with Curvature */
 .crt-container {
   position: relative;
-  width: 90vmin;
-  height: 70vmin;
+  width: 95vmin;
+  /* Slightly wider on small screens */
+  height: 90vmin;
+  max-width: 1000px;
+  max-height: 900px;
+  /* Cap height to avoid looking stretched on very tall monitors */
   background-color: var(--bg-color);
   border-radius: 20px;
   box-shadow:
@@ -46,6 +53,159 @@ body {
   overflow: hidden;
   border: 3px solid #2a4a2a;
   animation: screenGlow 4s ease-in-out infinite alternate;
+  display: flex;
+  flex-direction: column;
+}
+
+.game-content {
+  position: relative;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding: 1vmin;
+  box-sizing: border-box;
+}
+
+/* Header HUD */
+.hud-header {
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  margin-top: 2vmin;
+  margin-bottom: 2vmin;
+  font-size: clamp(1rem, 2.5vmin, 1.5rem);
+  text-shadow: 0 0 5px var(--phosphor-primary);
+  font-weight: bold;
+}
+
+.score-board {
+  display: flex;
+  gap: 20px;
+}
+
+/* Game Area */
+.game-area-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  position: relative;
+}
+
+/* Status Overlay */
+.status-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 200;
+  font-size: clamp(1.2rem, 4vmin, 2rem);
+  text-shadow: 0 0 10px var(--phosphor-primary);
+  background: rgba(0, 0, 0, 0.7);
+  padding: 2rem;
+  border: 1px solid var(--phosphor-primary);
+  box-shadow: 0 0 20px rgba(51, 255, 51, 0.2);
+  border-radius: 10px;
+  pointer-events: none;
+  /* Let clicks pass through if needed, though buttons need clicks */
+  pointer-events: auto;
+}
+
+/* Controls HUD */
+.hud-controls {
+  margin-top: auto;
+  margin-bottom: 2vmin;
+  text-align: center;
+  width: 100%;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+.control-buttons-row {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.hud-btn {
+  background: transparent;
+  border: 1px solid var(--phosphor-primary);
+  color: var(--phosphor-primary);
+  padding: 8px 15px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: clamp(0.7rem, 2vmin, 1rem);
+  transition: all 0.2s;
+}
+
+.hud-btn.active {
+  box-shadow: inset 0 0 10px var(--phosphor-primary);
+}
+
+.hud-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #666;
+  color: #666;
+}
+
+.hud-btn.secondary {
+  border-color: var(--neon-red);
+  color: var(--neon-red);
+}
+
+.hud-btn.secondary.active {
+  box-shadow: inset 0 0 10px var(--neon-red);
+}
+
+/* Updated Instructions and AI Status for better mobile fit */
+.instructions {
+  font-size: clamp(0.6rem, 2vmin, 0.8rem);
+  opacity: 0.7;
+  max-width: 95%;
+  margin: 5px auto;
+  line-height: 1.3;
+}
+
+
+
+/* Mobile Controls */
+.mobile-controls {
+  display: none !important;
+  /* Hidden by default on desktop */
+}
+
+/* Control Buttons */
+.control-btn {
+  background: rgba(0, 20, 0, 0.6);
+  border: 2px solid var(--phosphor-primary);
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  color: var(--phosphor-primary);
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  box-shadow: 0 0 10px rgba(51, 255, 51, 0.2);
+  transition: transform 0.1s, box-shadow 0.1s, background 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.control-btn:active {
+  transform: scale(0.9);
+  background: rgba(51, 255, 51, 0.2);
+  box-shadow: inset 0 0 10px rgba(51, 255, 51, 0.4);
 }
 
 /* Scanlines */
@@ -55,13 +215,11 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0),
-    rgba(255, 255, 255, 0) 50%,
-    rgba(0, 0, 0, 0.4) 50%,
-    rgba(0, 0, 0, 0.4)
-  );
+  background: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0) 50%,
+      rgba(0, 0, 0, 0.4) 50%,
+      rgba(0, 0, 0, 0.4));
   background-size: 100% 3px;
   z-index: 10;
   pointer-events: none;
@@ -95,49 +253,100 @@ body {
   border-radius: 20px;
 }
 
-/* Add some retro button styling */
-button {
-  transition: all 0.2s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-button:hover:not(:disabled) {
-  box-shadow: 0 0 15px rgba(51, 255, 51, 0.5) !important;
-  transform: scale(1.05);
-}
-
-button:active:not(:disabled) {
-  transform: scale(0.95);
-}
-
 @keyframes scroll {
-  0% { background-position: 0 0; }
-  100% { background-position: 0 100%; }
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 0 100%;
+  }
 }
 
 @keyframes flicker {
-  0% { opacity: 0.027; }
-  5% { opacity: 0.03; }
-  10% { opacity: 0.023; }
-  15% { opacity: 0.08; }
-  20% { opacity: 0.023; }
-  25% { opacity: 0.03; }
-  30% { opacity: 0.027; }
-  35% { opacity: 0.021; }
-  40% { opacity: 0.028; }
-  45% { opacity: 0.024; }
-  50% { opacity: 0.082; }
-  55% { opacity: 0.025; }
-  60% { opacity: 0.022; }
-  65% { opacity: 0.028; }
-  70% { opacity: 0.023; }
-  75% { opacity: 0.03; }
-  80% { opacity: 0.026; }
-  85% { opacity: 0.021; }
-  90% { opacity: 0.029; }
-  95% { opacity: 0.022; }
-  100% { opacity: 0.027; }
+  0% {
+    opacity: 0.027;
+  }
+
+  5% {
+    opacity: 0.03;
+  }
+
+  10% {
+    opacity: 0.023;
+  }
+
+  15% {
+    opacity: 0.08;
+  }
+
+  20% {
+    opacity: 0.023;
+  }
+
+  25% {
+    opacity: 0.03;
+  }
+
+  30% {
+    opacity: 0.027;
+  }
+
+  35% {
+    opacity: 0.021;
+  }
+
+  40% {
+    opacity: 0.028;
+  }
+
+  45% {
+    opacity: 0.024;
+  }
+
+  50% {
+    opacity: 0.082;
+  }
+
+  55% {
+    opacity: 0.025;
+  }
+
+  60% {
+    opacity: 0.022;
+  }
+
+  65% {
+    opacity: 0.028;
+  }
+
+  70% {
+    opacity: 0.023;
+  }
+
+  75% {
+    opacity: 0.03;
+  }
+
+  80% {
+    opacity: 0.026;
+  }
+
+  85% {
+    opacity: 0.021;
+  }
+
+  90% {
+    opacity: 0.029;
+  }
+
+  95% {
+    opacity: 0.022;
+  }
+
+  100% {
+    opacity: 0.027;
+  }
 }
 
 @keyframes screenGlow {
@@ -148,11 +357,139 @@ button:active:not(:disabled) {
       0 0 80px rgba(51, 255, 51, 0.1),
       inset 0 0 60px rgba(0, 0, 0, 0.8);
   }
+
   100% {
     box-shadow:
       0 0 30px rgba(51, 255, 51, 0.4),
       0 0 60px rgba(51, 255, 51, 0.3),
       0 0 120px rgba(51, 255, 51, 0.2),
       inset 0 0 60px rgba(0, 0, 0, 0.8);
+  }
+}
+
+/* MEDIA QUERIES FOR RESPONSIVENESS */
+
+@media (max-width: 768px) {
+  .crt-container {
+    width: 100vw;
+    height: 100dvh;
+    /* Use dvh for better mobile browser support */
+    max-height: none;
+    border-radius: 0;
+    border: none;
+    box-shadow: none !important;
+    /* Force remove shadow */
+    animation: none;
+    /* Disable heavy glow animation on mobile */
+  }
+
+  /* Optimize heavy effects on mobile */
+  .scanlines,
+  .flicker,
+  .glow {
+    display: none;
+    /* Remove overlay effects on mobile for performance/visibility */
+  }
+
+  .game-content {
+    padding: 10px;
+    justify-content: flex-start;
+    /* Align top, let flex-1 take space */
+    gap: 10px;
+  }
+
+  .hud-header {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 100%;
+    flex-shrink: 0;
+  }
+
+  .score-board {
+    gap: 10px;
+    font-size: 0.9em;
+  }
+
+  .game-area-wrapper {
+    padding: 0;
+    flex: 1;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    /* Ensure canvas doesn't overflow */
+  }
+
+  /* Adjust controls for potential overlap */
+  .hud-controls {
+    margin-bottom: 0;
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+    flex-shrink: 0;
+  }
+
+  .control-buttons-row {
+    gap: 8px;
+  }
+
+  .hud-btn {
+    padding: 8px 12px;
+    /* Larger touch targets */
+    font-size: 0.9rem;
+  }
+
+  .mobile-controls {
+    display: flex !important;
+    margin-top: 15px;
+    gap: 20px;
+    /* Space out d-pad buttons if separate */
+  }
+
+  .desktop-only {
+    display: none !important;
+  }
+}
+
+/* Restart Button Style */
+.restart-btn {
+  background: none;
+  border: none;
+  color: var(--phosphor-primary);
+  font-size: 3rem;
+  /* Made slightly larger since it's just the icon now */
+  width: auto;
+  height: auto;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.2s;
+  text-shadow: 0 0 10px var(--phosphor-primary);
+  /* Text shadow instead of box shadow */
+  box-shadow: none;
+}
+
+.restart-btn:hover {
+  transform: scale(1.1) rotate(180deg);
+  /* Add rotation on hover for effect */
+  text-shadow: 0 0 20px var(--phosphor-primary);
+  background: none;
+  box-shadow: none;
+}
+
+.restart-btn:active {
+  transform: scale(0.95);
+}
+
+/* Helper for mobile visibility */
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: inline !important;
   }
 }

@@ -3,7 +3,7 @@
 An 80s-inspired Snake game with a modern AI twist, built for the **AI for Bharat Week 4 Challenge**.
 
 ## 🕹️ The Game
-This isn't just your standard CRT-style Snake. It features an embedded **AI Autopilot** powered by **BFS Pathfinding** and **Smart Food Evasion**.
+This isn't just your standard CRT-style Snake. It features an embedded **AI Autopilot** powered by **Advanced Pathfinding** and **Smart Food Evasion**.
 
 - **Retro Aesthetic**: Glowing green phosphor graphics, CRT curvature, scanlines, and screen flicker.
 - **AI "The Twist"**: Toggle the AI mode to watch the computer play perfectly.
@@ -30,10 +30,16 @@ This isn't just your standard CRT-style Snake. It features an embedded **AI Auto
 
 ## 🎮 Controls
 
+### Desktop
 - **Arrow Keys**: Move the snake (Manual mode only)
-- **Spacebar**: Toggle between Manual and AI mode during gameplay, or start game from idle
+- **Spacebar**: Toggle between Manual and AI mode
 - **F Key**: Toggle Smart Food evasion on/off
-- **Spacebar** (Game Over): Restart the game
+- **Any Arrow Key** (Game Over): Restart the game
+
+### Mobile / Touch
+- **Touch Controls**: Use the on-screen joystick/arrows to move.
+- **AI Button**: Tap to toggle AI mode.
+- **Restart**: Tap the restart button or use arrow controls after game over.
 
 ## 🎯 Game Modes
 
@@ -41,7 +47,7 @@ This isn't just your standard CRT-style Snake. It features an embedded **AI Auto
 Control the snake directly with arrow keys. The challenge increases significantly with Smart Food enabled!
 
 ### AI Mode (Autopilot)
-Watch the AI play using BFS pathfinding. Even the AI struggles when Smart Food is enabled!
+Watch the AI play using advanced pathfinding. Even the AI struggles when Smart Food is enabled!
 
 ### Smart Food Mode
 When enabled, the food will attempt to escape when the snake gets within 5 tiles. The food appears orange with a pulsing white center and makes a subtle sound when it moves.
@@ -49,7 +55,7 @@ When enabled, the food will attempt to escape when the snake gets within 5 tiles
 ## 🧠 Technical Details
 
 ### Pathfinding Logic (`src/utils/aiLogic.js`)
-The AI uses a **Breadth-First Search (BFS)** algorithm to calculate the shortest path from the snake's head to the food at every single frame.
+The AI uses a **Shortest Path** algorithm to calculate the route from the snake's head to the food at every single frame.
 
 - **Input**: Current grid state (snake body, obstacles, walls).
 - **Process**: Explores all possible moves layer by layer until the food is found.
